@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/add_element_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/show_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="@string/text_show_title"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/show_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_title"
+            android:text="@string/text_show_group"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/show_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_group"
+            android:text="@string/text_show_price"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/show_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_price"
+            android:text="@string/text_show_description"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/show_date_added"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_description"
+            android:text="@string/text_show_date_added"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+        <TextView
+            android:id="@+id/show_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/show_date_added"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/check_status"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            android:text="@string/text_show_status"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+        <CheckBox
+            android:id="@+id/check_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBaseline_toBaselineOf="@id/show_status"
+            app:layout_constraintStart_toEndOf="@id/show_status"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:enabled="false"
+            />
+
+        <TextView
+            android:id="@+id/show_date_bought"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/check_status"
+            android:text="@string/text_show_date_bought"
+            android:layout_marginBottom="@dimen/fab_margin"
+            android:padding="@dimen/image_margin"
+            android:textSize="@dimen/element_text_size"
+            android:gravity="center"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

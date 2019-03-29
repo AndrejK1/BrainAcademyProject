@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.andrejkgames.brainacademyproject.BoughtItemsActivity">
+
+    <item
+        android:id="@+id/action_go_to_main"
+        android:orderInCategory="150"
+        android:title="@string/text_go_to_not_bought"
+        android:icon="@drawable/ic_chevron_right_black_24dp"
+        app:showAsAction="always" />
+</menu>

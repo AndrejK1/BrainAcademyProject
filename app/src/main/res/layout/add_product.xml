@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:id="@+id/add_element_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inp_title_l"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:hint="@string/text_inp_title">
+            <EditText
+                android:id="@+id/inp_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <Spinner
+            android:id="@+id/group_list_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/inp_title_l"
+            android:layout_marginTop="@dimen/image_margin"
+            />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inp_groups_l"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/group_list_spinner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/image_margin"
+            android:hint="@string/text_inp_group"
+            >
+            <EditText
+                android:id="@+id/inp_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inp_price_l"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/inp_groups_l"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/image_margin"
+            android:hint="@string/text_inp_price"
+            >
+            <EditText
+                android:id="@+id/inp_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/inp_description_l"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/inp_price_l"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/image_margin"
+            android:hint="@string/text_inp_description"
+            >
+            <EditText
+                android:id="@+id/inp_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </android.support.design.widget.TextInputLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
