@@ -41,9 +41,6 @@ public interface ProductsTableDAO {
     @Query("DELETE FROM Product WHERE isBought = 1")
     void deleteBought();
 
-    @Query("DELETE FROM Product WHERE itemID = :id")
-    void deleteGroup(long id);
-
     @Query("DELETE FROM Product")
     void deleteAllProducts();
 }

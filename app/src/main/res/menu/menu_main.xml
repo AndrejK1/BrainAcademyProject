@@ -7,6 +7,6 @@
         android:id="@+id/action_go_to_bought"
         android:orderInCategory="150"
         android:title="@string/text_go_to_bought"
-        android:icon="@drawable/ic_chevron_right_black_24dp"
+        android:icon="@drawable/ic_arrow_forward_black_24dp"
         app:showAsAction="always" />
 </menu>

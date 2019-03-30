@@ -17,7 +17,7 @@
     <string name="text_show_price">Цена: </string>
     <string name="text_show_description">Описание: </string>
     <string name="text_show_status">Куплено: </string>
-    <string name="text_show_date_added">Добалено: </string>
+    <string name="text_show_date_added">Добавлено: </string>
     <string name="text_show_date_bought">Куплено: </string>
     <string name="text_show_element">Описание</string>
     <string name="text_go_to_bought">Перейти к купленным</string>

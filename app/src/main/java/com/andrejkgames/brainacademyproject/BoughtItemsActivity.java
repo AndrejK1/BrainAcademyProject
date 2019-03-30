@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import com.andrejkgames.brainacademyproject.database.RoomDb;
 import com.andrejkgames.brainacademyproject.list.Groups;
 import com.andrejkgames.brainacademyproject.list.GroupsAdapter;
 import com.andrejkgames.brainacademyproject.list.ProductViewHolder;
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,21 +31,24 @@ import java.util.List;
 public class BoughtItemsActivity extends AppCompatActivity implements ProductViewHolder.Updatable {
 
     RecyclerView recycler;
+    GroupsAdapter mAdapter;
     RoomDb myDb;
     Handler mainHandler;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bought_items);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // my db
         myDb = Room.databaseBuilder(getApplicationContext(), RoomDb.class, "globalDatabase").build();
 
         // recycler
         recycler = findViewById(R.id.recycler_bought_list);
+        mAdapter =  new GroupsAdapter(this,  new ArrayList<Groups>(), this);
 
         FloatingActionButton fab = findViewById(R.id.fab2);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -77,14 +82,27 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
 
         mainHandler = new Handler(Looper.getMainLooper()){
             @Override
-            public void handleMessage(Message msg) {
+            public void handleMessage(final Message msg) {
                 super.handleMessage(msg);
                 List<Groups> groups = msg.getData().getParcelableArrayList(MainActivity.GET_GROUPS);
                 if (groups == null) {
                     groups = new ArrayList<>();
                 }
-                GroupsAdapter adapter = new GroupsAdapter(BoughtItemsActivity.this, groups, BoughtItemsActivity.this);
-                recycler.setAdapter(adapter);
+                mAdapter = new GroupsAdapter(BoughtItemsActivity.this, groups, BoughtItemsActivity.this);
+                mAdapter.onRestoreInstanceState(savedInstanceState);
+                mAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
+                    @Override
+                    public void onParentExpanded(int parentPosition) {
+                        mAdapter.collapseAllParents();
+                        mAdapter.expandParent(parentPosition);
+                    }
+
+                    @Override
+                    public void onParentCollapsed(int parentPosition) {
+
+                    }
+                });
+                recycler.setAdapter(mAdapter);
                 recycler.setLayoutManager(new LinearLayoutManager(BoughtItemsActivity.this));
             }
         };
@@ -140,6 +158,16 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        saveAdapter(savedInstanceState);
+    }
+
+    private void saveAdapter(Bundle savedInstanceState){
+        mAdapter.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {//создаем меню .inflate передаем меню
         getMenuInflater().inflate(R.menu.menu_second, menu);
         return true;
@@ -147,7 +175,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {//отрабатывае каждый раз когда мы выбираем один из пунктов меню
-        if (item.getItemId() == R.id.action_go_to_main) {
+        if (item.getItemId() == android.R.id.home) {
             startActivity(new Intent(this, MainActivity.class));
         }
         return super.onOptionsItemSelected(item);

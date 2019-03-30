@@ -8,7 +8,9 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#16010101"
+        >
 
         <TextView
             android:id="@+id/element_title"
@@ -52,7 +54,7 @@
             app:layout_constraintBottom_toBottomOf="@id/element_title"
             app:layout_constraintEnd_toEndOf="@id/layout"
             app:srcCompat="@drawable/ic_delete_black_24dp"
-            android:background="#ffff"
+            android:background="#00ffffff"
             android:padding="@dimen/image_margin"
             android:contentDescription="@string/content_description_delete"
             />

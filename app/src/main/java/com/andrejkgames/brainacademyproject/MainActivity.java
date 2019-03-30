@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ProductViewHolder.Updatable {
 
     RecyclerView recycler;
+    GroupsAdapter mAdapter;
     RoomDb myDb;
     Handler mainHandler;
     List<String> groupNames = new ArrayList<>();
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
     public static final String GET_GROUPS = "com.andrejkgames.brainacademyproject.GET_GROUPS";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // toolbar
@@ -69,8 +71,9 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 List<Groups> groups = msg.getData().getParcelableArrayList(GET_GROUPS);
-                GroupsAdapter adapter = new GroupsAdapter(MainActivity.this, groups, MainActivity.this);
-                recycler.setAdapter(adapter);
+                mAdapter = new GroupsAdapter(MainActivity.this, groups, MainActivity.this);
+                mAdapter.onRestoreInstanceState(savedInstanceState);
+                recycler.setAdapter(mAdapter);
                 recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
             }
         };
@@ -99,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
 
                 Message message = new Message();
                 Bundle bundle = new Bundle();
+
                 bundle.putParcelableArrayList(MainActivity.GET_GROUPS, new ArrayList<>(groups));
                 message.setData(bundle);
                 mainHandler.sendMessage(message);
@@ -194,6 +198,16 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
             Toast.makeText(this, getResources().getText(R.string.err_null_title), Toast.LENGTH_SHORT).show();
         return false;
     } // method
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        saveAdapter(savedInstanceState);
+    }
+
+    private void saveAdapter(Bundle savedInstanceState){
+        mAdapter.onSaveInstanceState(savedInstanceState);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {//создаем меню .inflate передаем меню
