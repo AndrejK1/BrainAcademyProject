@@ -13,12 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -42,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
     Handler mainHandler;
     List<String> groupNames = new ArrayList<>();
 
-    public static final String SCROLL_KEY = "com.andrju.bap.SCROLL";
+    public static final String SCROLL_KEY = "com.bap.SCROLL";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -74,13 +71,14 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
                 super.handleMessage(msg);
 
                 switch (msg.what){
-                    case 0: // полное обновление адаптера
+                    case 0: // load all info to adapter
+                        @SuppressWarnings("unchecked")
                         List<Groups> groups = (ArrayList<Groups>)msg.obj;
-                        Log.e("MY_APP", "SIZE GROUPS:" + groups.size());
                         mAdapter.setParentList(groups, false);
                         mAdapter.onRestoreInstanceState(savedInstanceState);
                         recycler.setAdapter(mAdapter);
                         recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                        // restore scrolled position
                         if (savedInstanceState != null && recycler.getLayoutManager() != null) {
                             ((LinearLayoutManager) recycler.getLayoutManager()).scrollToPositionWithOffset(
                                     savedInstanceState.getInt(SCROLL_KEY, 0),0);
@@ -144,8 +142,7 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
     public void deleteProduct(ProductViewHolder pvh) {}
 
     private void showMenu(){
-        final View addView = LayoutInflater.from(this).inflate(R.layout.add_product, null);
-
+        final View addView = View.inflate(this, R.layout.add_product, null);
         addView.findViewById(R.id.inp_groups).setVisibility(View.GONE);
         // spinner
         Spinner spinner = addView.findViewById(R.id.group_list_spinner);
@@ -230,13 +227,13 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {//создаем меню .inflate передаем меню
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {//отрабатывае каждый раз когда мы выбираем один из пунктов меню
+    public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_go_to_bought) {
             startActivity(new Intent(this, BoughtItemsActivity.class));
         }

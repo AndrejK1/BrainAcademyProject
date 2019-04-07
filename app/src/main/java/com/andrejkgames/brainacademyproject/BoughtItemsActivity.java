@@ -56,7 +56,8 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
                 super.handleMessage(msg);
 
                 switch (msg.what) {
-                    case 0: // полное обновление адаптера
+                    case 0: // load all info to adapter
+                        @SuppressWarnings("unchecked")
                         List<Groups> groups = (ArrayList<Groups>)msg.obj;
                         mAdapter.setParentList(groups, false);
                         mAdapter.onRestoreInstanceState(savedInstanceState);
@@ -74,6 +75,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
                         });
                         recycler.setAdapter(mAdapter);
                         recycler.setLayoutManager(new LinearLayoutManager(BoughtItemsActivity.this));
+                        // restore scrolled position
                         if (savedInstanceState != null && recycler.getLayoutManager() != null) {
                             ((LinearLayoutManager) recycler.getLayoutManager()).scrollToPositionWithOffset(
                                     savedInstanceState.getInt(MainActivity.SCROLL_KEY, 0),0);
@@ -82,7 +84,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
                     case 1: // delete all from adapter
                         mAdapter.notifyParentRangeRemoved(0, mAdapter.getParentList().size());
                         break;
-                    case 2: // delete product
+                    case 2: // remove product
                         mAdapter.notifyChildRemoved(msg.arg1, msg.arg2);
                         mAdapter.getParentList().get(msg.arg1).removeProduct(msg.arg2);
                         if (mAdapter.getParentList().get(msg.arg1).getChildList().size() == 0) {
@@ -102,7 +104,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // запрос на удаление
+                // delete alert
                 new AlertDialog.Builder(BoughtItemsActivity.this)
                         .setTitle(R.string.delete_all_question)
                         .setMessage(R.string.delete_all_description)
@@ -112,7 +114,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        myDb.getTableDAO().deleteBought(); // удаление купленных из бд
+                                        myDb.getTableDAO().deleteBought(); // delete bought items
                                         mainHandler.sendEmptyMessage(1);
                                     }
                                 }).start();
@@ -132,7 +134,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
     }
 
     @Override
-    public void updateRecycler() { // полное обновление из бд
+    public void updateRecycler() { // update from db
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -154,7 +156,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
     }
 
     @Override
-    public void setProductStatus(final ProductViewHolder pvh) { // отменить покупку
+    public void setProductStatus(final ProductViewHolder pvh) { // unset status "bought"
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -166,7 +168,7 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
     }
 
     @Override
-    public void deleteProduct(final ProductViewHolder pvh) {
+    public void deleteProduct(final ProductViewHolder pvh) { // delete product
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -187,16 +189,16 @@ public class BoughtItemsActivity extends AppCompatActivity implements ProductVie
         mAdapter.onSaveInstanceState(savedInstanceState);
     }
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {//создаем меню .inflate передаем меню
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_second, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) { // кнопка-стрелка
+        if (item.getItemId() == android.R.id.home) { // back
             Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // очистить стак активностей
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // clear stack
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);

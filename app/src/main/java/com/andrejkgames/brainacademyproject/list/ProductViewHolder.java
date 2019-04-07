@@ -17,6 +17,7 @@ import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class ProductViewHolder extends ChildViewHolder {
     private CardView mProductView;
@@ -80,7 +81,8 @@ public class ProductViewHolder extends ChildViewHolder {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 product.setBought(isChecked);
-                product.setDateBought( new SimpleDateFormat().format(new Date()) );
+                product.setDateBought( new SimpleDateFormat(
+                        "dd.MM.yyyy HH:mm", Locale.getDefault()).format(new Date()) );
                 activity.setProductStatus(ProductViewHolder.this);
             }
         });

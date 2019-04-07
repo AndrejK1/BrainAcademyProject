@@ -2,13 +2,13 @@ package com.andrejkgames.brainacademyproject.database;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
 @Entity(tableName = "Product")
-public class Product implements Parcelable {
+public class Product {
 
     @PrimaryKey(autoGenerate = true)
     private long itemID;
@@ -21,7 +21,8 @@ public class Product implements Parcelable {
     private boolean isBought;
 
     public Product(String title, String groupName, String description, double price) {
-        dateAdded = new SimpleDateFormat().format(new Date());
+        dateAdded = new SimpleDateFormat("dd.MM.yyyy HH:mm",
+                Locale.getDefault()).format(new Date());
         isBought = false;
         dateBought = "Not bought yet";
         this.title = title;
@@ -120,42 +121,4 @@ public class Product implements Parcelable {
         this.itemID = itemID;
     }
 
-    protected Product(Parcel in) {
-        title = in.readString();
-        groupName = in.readString();
-        description = in.readString();
-        price = in.readDouble();
-        dateAdded = in.readString();
-        dateBought = in.readString();
-        isBought = in.readByte() != 0x00;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeString(groupName);
-        dest.writeString(description);
-        dest.writeDouble(price);
-        dest.writeString(dateAdded);
-        dest.writeString(dateBought);
-        dest.writeByte((byte) (isBought ? 0x01 : 0x00));
-    }
-
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<Product> CREATOR = new Parcelable.Creator<Product>() {
-        @Override
-        public Product createFromParcel(Parcel in) {
-            return new Product(in);
-        }
-
-        @Override
-        public Product[] newArray(int size) {
-            return new Product[size];
-        }
-    };
 }

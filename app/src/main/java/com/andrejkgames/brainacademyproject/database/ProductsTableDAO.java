@@ -20,14 +20,17 @@ public interface ProductsTableDAO {
     @Delete
     void deleteItem(Product product);
 
-    @Query("SELECT * FROM Product")
-    List<Product> getAllItems();
-
     @Query("SELECT * FROM Product WHERE isBought = 0")
     List<Product> getNotBoughtItems();
 
     @Query("SELECT * FROM Product WHERE isBought = 1")
     List<Product> getBoughtItems();
+
+    @Query("DELETE FROM Product WHERE isBought = 1")
+    void deleteBought();
+// extra @Query methods
+    @Query("SELECT * FROM Product")
+    List<Product> getAllItems();
 
     @Query("SELECT * FROM Product WHERE itemID = :id")
     Product getItemByID(long id);
@@ -37,9 +40,6 @@ public interface ProductsTableDAO {
 
     @Query("DELETE FROM Product WHERE groupName = :groupName")
     void deleteGroup(String groupName);
-
-    @Query("DELETE FROM Product WHERE isBought = 1")
-    void deleteBought();
 
     @Query("DELETE FROM Product")
     void deleteAllProducts();
