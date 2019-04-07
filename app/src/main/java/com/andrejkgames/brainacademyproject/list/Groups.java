@@ -28,6 +28,10 @@ public class Groups implements Parent<Product>, Parcelable {
         mProducts.add(product);
     }
 
+    public void removeProduct(int index){
+        mProducts.remove(index);
+    }
+
     @Override
     public List<Product> getChildList() {
         return mProducts;

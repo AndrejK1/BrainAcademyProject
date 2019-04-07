@@ -81,21 +81,25 @@ public class ProductViewHolder extends ChildViewHolder {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 product.setBought(isChecked);
                 product.setDateBought( new SimpleDateFormat().format(new Date()) );
-                activity.updateProduct(product);
+                activity.setProductStatus(ProductViewHolder.this);
             }
         });
 
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.deleteProduct(product);
+                activity.deleteProduct(ProductViewHolder.this);
             }
         });
     }
 
+    public Product getProduct() {
+        return mProduct;
+    }
+
     public interface Updatable {
         void updateRecycler();
-        void updateProduct(Product product);
-        void deleteProduct(Product product);
+        void setProductStatus(ProductViewHolder pvh);
+        void deleteProduct(ProductViewHolder pvh);
     }
 }

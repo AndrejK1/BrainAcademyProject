@@ -7,17 +7,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
     Handler mainHandler;
     List<String> groupNames = new ArrayList<>();
 
-    public static final String GET_GROUPS = "com.andrejkgames.brainacademyproject.GET_GROUPS";
+    public static final String SCROLL_KEY = "com.andrju.bap.SCROLL";
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -65,19 +66,40 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
 
         // recycler
         recycler = findViewById(R.id.recycler_list);
+        mAdapter =  new GroupsAdapter(this,  new ArrayList<Groups>(), this);
 
         mainHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                List<Groups> groups = msg.getData().getParcelableArrayList(GET_GROUPS);
-                mAdapter = new GroupsAdapter(MainActivity.this, groups, MainActivity.this);
-                mAdapter.onRestoreInstanceState(savedInstanceState);
-                recycler.setAdapter(mAdapter);
-                recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            }
-        };
 
+                switch (msg.what){
+                    case 0: // полное обновление адаптера
+                        List<Groups> groups = (ArrayList<Groups>)msg.obj;
+                        Log.e("MY_APP", "SIZE GROUPS:" + groups.size());
+                        mAdapter.setParentList(groups, false);
+                        mAdapter.onRestoreInstanceState(savedInstanceState);
+                        recycler.setAdapter(mAdapter);
+                        recycler.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                        if (savedInstanceState != null && recycler.getLayoutManager() != null) {
+                            ((LinearLayoutManager) recycler.getLayoutManager()).scrollToPositionWithOffset(
+                                    savedInstanceState.getInt(SCROLL_KEY, 0),0);
+                        }
+                        break;
+                    case 2: // remove product
+                        mAdapter.notifyChildRemoved(msg.arg1, msg.arg2);
+                        mAdapter.getParentList().get(msg.arg1).removeProduct(msg.arg2);
+                        if (mAdapter.getParentList().get(msg.arg1).getChildList().size() == 0) {
+                            mAdapter.notifyParentDataSetChanged(true);
+                            mAdapter.notifyParentRemoved(msg.arg1);
+                            mAdapter.getParentList().remove(msg.arg1);
+                        }
+                        mAdapter.notifyParentDataSetChanged(true);
+                        recycler.setAdapter(mAdapter);
+                        break;
+                } // end switch
+            } // end handleMessage
+        }; // end handler
         updateRecycler();
     }
 
@@ -100,34 +122,32 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
                 }
                 groupNames.add(getResources().getString(R.string.text_add_group));
 
-                Message message = new Message();
-                Bundle bundle = new Bundle();
-
-                bundle.putParcelableArrayList(MainActivity.GET_GROUPS, new ArrayList<>(groups));
-                message.setData(bundle);
-                mainHandler.sendMessage(message);
+                mainHandler.obtainMessage(0, 0, 0, groups).sendToTarget();
             }
         }).start();
     }
 
     @Override
-    public void updateProduct(final Product product) {
+    public void setProductStatus(final ProductViewHolder pvh) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                myDb.getTableDAO().updateItem(product);
-                updateRecycler();
+                myDb.getTableDAO().updateItem(pvh.getProduct());
+                mainHandler.obtainMessage(2, pvh.getParentAdapterPosition(),
+                        pvh.getChildAdapterPosition()).sendToTarget();
             }
         }).start();
     }
 
     @Deprecated
     @Override
-    public void deleteProduct(Product product) {}
+    public void deleteProduct(ProductViewHolder pvh) {}
 
     private void showMenu(){
         final View addView = LayoutInflater.from(this).inflate(R.layout.add_product, null);
+
         addView.findViewById(R.id.inp_groups).setVisibility(View.GONE);
+        // spinner
         Spinner spinner = addView.findViewById(R.id.group_list_spinner);
         spinner.setAdapter(
                 new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, groupNames));
@@ -144,26 +164,26 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
         });
-
+        // dialog
         AlertDialog addGroup = new AlertDialog.Builder(MainActivity.this)
                 .setTitle(R.string.text_add_element)
                 .setView(addView)
                 .setPositiveButton(R.string.text_add_element, null)
                 .setNegativeButton(R.string.text_cancel, null)
                 .create();
-            addGroup.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(final DialogInterface dialog) {
-                    ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE)
-                            .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if (productAdd(addView))
-                                dialog.dismiss();
-                        }
-                    });
-                }
-            });
+        addGroup.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE)
+                        .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (productAdd(addView))
+                            dialog.dismiss();
+                    }
+                });
+            }
+        });
         addGroup.show();
     }
 
@@ -202,10 +222,10 @@ public class MainActivity extends AppCompatActivity implements ProductViewHolder
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        saveAdapter(savedInstanceState);
-    }
-
-    private void saveAdapter(Bundle savedInstanceState){
+        if (recycler.getLayoutManager() != null) {
+            savedInstanceState.putInt(SCROLL_KEY,
+                    ((LinearLayoutManager)recycler.getLayoutManager()).findFirstVisibleItemPosition());
+        }
         mAdapter.onSaveInstanceState(savedInstanceState);
     }
 
