@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Brain Academy Project</string>
+    <string name="app_name">Список покупок</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_bought_items">BoughtItemsActivity</string>
+    <string name="title_activity_bought_items">Список купленого</string>
     <string name="text_add_group">Добавить группу</string>
     <string name="text_add_element">Добавить продукт</string>
     <string name="text_cancel">Отменить</string>
